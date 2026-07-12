@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="HaoXiang Huang" />
+    <meta name="application-name" content="LAN File Transfer Admin" />
+    <title>LAN File Transfer Admin</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body data-role="admin">
+    <main class="app-shell">
+      <header class="topbar">
+        <div>
+          <h1 data-i18n="appTitle">局域网文件传输</h1>
+          <p id="statusLine">管理员</p>
+        </div>
+        <div class="topbar-actions">
+          <select id="languageSelect" class="compact-select" aria-label="Language">
+            <option value="zh">中文</option>
+            <option value="en">English</option>
+          </select>
+          <span class="role-badge role-admin" data-i18n="admin">管理员</span>
+          <details id="adminToolsMenu" class="tool-menu hidden">
+            <summary data-i18n="tools">工具</summary>
+            <div class="tool-popover">
+              <section>
+                <h2 data-i18n="upload">上传</h2>
+                <div class="mini-upload">
+                  <input id="fileInput" type="file" multiple hidden />
+                  <input id="folderInput" type="file" multiple webkitdirectory hidden />
+                  <button id="fileButton" type="button" data-i18n="chooseFiles">选择文件</button>
+                  <button id="folderButton" type="button" data-i18n="chooseFolder">选择文件夹</button>
+                </div>
+              </section>
+              <section>
+                <h2 data-i18n="account">账户</h2>
+                <form id="passwordForm" class="auth-form stacked-form">
+                  <label>
+                    <span data-i18n="currentPassword">当前密码</span>
+                    <input id="currentPassword" type="password" autocomplete="current-password" required />
+                  </label>
+                  <label>
+                    <span data-i18n="newPassword">新密码</span>
+                    <input id="newPassword" type="password" autocomplete="new-password" minlength="8" required />
+                  </label>
+                  <button type="submit" data-i18n="changePassword">修改密码</button>
+                </form>
+              </section>
+              <section>
+                <h2 data-i18n="uploadQueue">上传队列</h2>
+                <div class="queue-head">
+                  <span data-i18n="queueCount">队列数</span>
+                  <span id="queueCount">0</span>
+                </div>
+                <div id="queue" class="queue empty">暂无上传</div>
+              </section>
+              <div id="adminMessage" class="auth-message"></div>
+            </div>
+          </details>
+          <details id="manageMenu" class="tool-menu hidden">
+            <summary data-i18n="manage">管理</summary>
+            <div class="tool-popover wide-popover">
+              <section>
+                <h2 data-i18n="createUser">创建账户</h2>
+                <form id="userForm" class="auth-form stacked-form">
+                  <label>
+                    <span data-i18n="username">用户名</span>
+                    <input id="newUsername" type="text" autocomplete="off" required />
+                  </label>
+                  <label>
+                    <span data-i18n="password">密码</span>
+                    <input id="newUserPassword" type="password" autocomplete="new-password" placeholder="12345678" />
+                  </label>
+                  <label>
+                    <span data-i18n="groups">组</span>
+                    <input id="newUserGroupSearch" class="compact-input" type="search" data-i18n-placeholder="searchGroups" data-i18n-aria-label="searchGroups" placeholder="搜索组" aria-label="搜索组" />
+                  </label>
+                  <div id="newUserGroupsPicker" class="group-picker"></div>
+                  <button type="submit" data-i18n="createUser">创建账户</button>
+                </form>
+              </section>
+              <section>
+                <h2 data-i18n="batchCreate">批量创建</h2>
+                <form id="batchUserForm" class="auth-form stacked-form">
+                  <label>
+                    <span data-i18n="batchUsers">账户列表</span>
+                    <textarea id="batchUsersText" rows="5" data-i18n-placeholder="batchUsersHint" placeholder="每行一个用户名，或 username,password,display"></textarea>
+                  </label>
+                  <input id="batchGroupSearch" class="compact-input" type="search" data-i18n-placeholder="searchGroups" data-i18n-aria-label="searchGroups" placeholder="搜索组" aria-label="搜索组" />
+                  <div id="batchGroupsPicker" class="group-picker"></div>
+                  <button type="submit" data-i18n="batchCreate">批量创建</button>
+                </form>
+              </section>
+              <section>
+                <h2 data-i18n="groups">组</h2>
+                <form id="groupForm" class="auth-form stacked-form">
+                  <label>
+                    <span data-i18n="groupId">组 ID</span>
+                    <input id="newGroupId" type="text" autocomplete="off" required />
+                  </label>
+                  <label>
+                    <span data-i18n="groupName">名称</span>
+                    <input id="newGroupName" type="text" autocomplete="off" />
+                  </label>
+                  <button type="submit" data-i18n="createGroup">创建组</button>
+                </form>
+              </section>
+              <section>
+                <h2 data-i18n="users">用户</h2>
+                <div id="userList" class="admin-list empty">尚未加载用户。</div>
+              </section>
+              <section>
+                <h2 data-i18n="groups">组</h2>
+                <div id="groupList" class="admin-list empty">尚未加载组。</div>
+              </section>
+              <section>
+                <div class="section-head">
+                  <h2 data-i18n="auditLog">审计日志</h2>
+                  <button id="auditRefreshButton" type="button" data-i18n="refresh">刷新</button>
+                </div>
+                <div id="auditList" class="admin-list empty">尚未加载审计日志。</div>
+              </section>
+            </div>
+          </details>
+          <button id="logoutButton" class="hidden" type="button" data-i18n="logout">退出</button>
+        </div>
+      </header>
+
+      <section id="authPanel" class="panel auth-panel">
+        <div class="panel-title">
+          <h2 id="authTitle">管理员登录</h2>
+        </div>
+        <form id="loginForm" class="auth-form hidden">
+          <label>
+            <span data-i18n="username">用户名</span>
+            <input id="loginUsername" type="text" autocomplete="username" value="admin" required />
+          </label>
+          <label>
+            <span data-i18n="password">密码</span>
+            <input id="loginPassword" type="password" autocomplete="current-password" required />
+          </label>
+          <button type="submit" data-i18n="login">登录</button>
+        </form>
+        <div id="authMessage" class="auth-message"></div>
+      </section>
+
+      <section id="adminApp" class="hidden">
+        <section id="dropZone" class="drop-zone">
+          <button id="plusButton" class="drop-mark" type="button" data-i18n-aria-label="chooseFiles" aria-label="选择文件">+</button>
+          <div>
+            <h2 data-i18n="dropTitle">拖拽文件到这里</h2>
+            <p data-i18n="adminDropHint">管理员上传的文件默认给 everyone 组可见。</p>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-title">
+            <h2 data-i18n="files">文件</h2>
+            <div class="file-actions toolbar-inline">
+              <input id="searchInput" class="compact-input" type="search" data-i18n-placeholder="searchFiles" data-i18n-aria-label="searchFiles" placeholder="搜索文件" aria-label="搜索文件" />
+              <select id="sortBySelect" class="compact-select" data-i18n-aria-label="sortBy" aria-label="排序字段">
+                <option value="uploaded" data-i18n="sortUploaded">上传时间</option>
+                <option value="mtime" data-i18n="sortMtime">修改时间</option>
+                <option value="size" data-i18n="sortSize">大小</option>
+                <option value="name" data-i18n="sortName">名称</option>
+                <option value="owner" data-i18n="sortOwner">所有者</option>
+              </select>
+              <select id="sortDirSelect" class="compact-select" data-i18n-aria-label="sortDirection" aria-label="排序方向">
+                <option value="desc" data-i18n="sortDesc">降序</option>
+                <option value="asc" data-i18n="sortAsc">升序</option>
+              </select>
+              <button id="refreshButton" type="button" data-i18n="refresh">刷新</button>
+              <button id="selectAllButton" type="button" data-i18n="selectAll">全选</button>
+              <button id="clearSelectionButton" type="button" data-i18n="clearSelection">清除选择</button>
+              <button id="zipSelectedButton" type="button" data-i18n="zipSelected">打包所选</button>
+              <button id="zipAllButton" type="button" data-i18n="zipAll">全部打包</button>
+              <span id="selectionCount" class="toolbar-status">0</span>
+            </div>
+          </div>
+          <div id="fileList" class="file-list empty">暂无文件。</div>
+        </section>
+      </section>
+
+      <footer class="app-footer">
+        <span data-i18n="authorLine">作者：HaoXiang Huang · didadida1688@gmail.com</span>
+        <a href="https://nextweb4.github.io/" target="_blank" rel="noreferrer">nextweb4.github.io</a>
+        <a href="https://github.com/NextWeb4" target="_blank" rel="noreferrer">GitHub</a>
+      </footer>
+    </main>
+    <script src="/static/admin.js"></script>
+  </body>
+</html>
